@@ -5,7 +5,7 @@
 Add-Type -AssemblyName PresentationCore, PresentationFramework
 
 $Xaml = @"
-<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" Title="IT Help Tool" Width="377" Name="kddhyif3834rg">
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" Title="IT Help Tool" Width="500" Name="mainWindow">
     <Window.Resources>
         <Style TargetType="Button">
             <Setter Property="Padding" Value="5"/>
@@ -54,7 +54,7 @@ $Xaml = @"
             <TextBlock Style="{StaticResource HeaderStyle}" TextWrapping="Wrap" Text="{Binding titleText}" Name="titleTextBlock" Foreground="#ffffff"/>
         </Border>
         <TabControl Grid.Row="1" SelectedIndex="{Binding tabControlIndex}" TabStripPlacement="Left" Name="kddhyif4fnh4o">
-            <TabItem Visibility="Hidden">
+            <TabItem Name="kdek7manke31y">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
@@ -95,7 +95,7 @@ $Xaml = @"
                         <TextBlock Name="userNameTextBlock" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Username:" Grid.Row="3" Grid.Column="0" Margin="10"/>
                         <TextBox Name="userNameTextBox" VerticalAlignment="Top" TextWrapping="Wrap" Text="{Binding userName}" Style="{StaticResource OutputConsoleStyle}" Grid.Row="3" Grid.Column="1" Margin="10"/>
 
-                        <Button Template="{StaticResource HyperlinkLikeButtonTemplate}" Content="Advanced info" Grid.Row="4" Margin="10" Name="kddhyif5tgqal"/>
+                        <Button Template="{StaticResource HyperlinkLikeButtonTemplate}" Content="Advanced info" Grid.Row="4" Margin="10" Name="advancedInfoButton"/>
 
                     </Grid>
 
@@ -125,8 +125,8 @@ $Xaml = @"
 
                     <TextBox Name="advancedInfoTextBox" Grid.Row="1" Margin="10" Text="{Binding advancedInfoTextBox}" Style="{StaticResource OutputConsoleStyle}"/>
                     <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <Button Name="kddhyif6nvlgk">Copy to clipboard</Button>
-                        <Button Name="kddhyif6wutf1">Back</Button>
+                        <Button Name="copyToClipboardButton">Copy to clipboard</Button>
+                        <Button Name="backButton">Back</Button>
                     </StackPanel>
                 </Grid>
 
@@ -135,7 +135,6 @@ $Xaml = @"
         </TabControl>
     </Grid>
 </Window>
-
 "@
 
 #-------------------------------------------------------------#
@@ -157,7 +156,7 @@ function Get-PublicIpAddress {
 }
 
 #region +++++++++++++++++++++ Gather Basic Data +++++++++++++++++++++ 
-function Gather-BasicData {
+function Initialize-BasicDataPage {
     
     Async {
         $State.computerName             = $env:COMPUTERNAME
@@ -173,7 +172,7 @@ function Gather-BasicData {
 #endregion
 
 #region +++++++++++++++++++++ Gather Advanced Data +++++++++++++++++++++
-function Gather-AdvancedData {
+function Initialize-AdvancedDataPage {
     
     Add-Type -AssemblyName System.Windows.Forms
     
@@ -211,91 +210,94 @@ function Gather-AdvancedData {
     
     # Display results
     if (!$ip1) {
-        $State.advancedInfoTextBox = "Computer Name:`t`t" + $State.computerName + "`nUser Name:`t`t" + $State.username + "`n`nNetwork Adapter:`t" + $nicname0 + "`nIP Address:`t`t" + $ip0 + "`nMAC Address:`t`t" + $mac0 + "`nDNS Servers:`t`t" + $dnsservers + "`nDHCP Server:`t`t" + $dhcpserver + "`nDefault Gateway:`t" + $defaultGateway + "`nPublic IP:`t`t" + $publicIpAddress + "`n`nDomain:`t`t`t" + $domain + "`n`nComputer Manufacturer:"+ $compManufacturer + "`nComputer Model:`t" + $compmodel + "`nProcessor:`t`t" + $processorName + "`nMemory Amount:`t`t" + $memamount + "GB" + "`nSystem Uptime:`t`t" + $uptime + "`nWindows Version:`t" + $winversion
+        $State.advancedInfoTextBox = "Computer Name:`t`t" + $State.computerName + "`nUser Name:`t`t" + $State.username + "`n`nNetwork Adapter:`t" + $nicname0 + "`nIP Address:`t`t" + $ip0 + "`nMAC Address:`t`t" + $mac0 + "`nDNS Servers:`t`t" + $dnsservers + "`nDHCP Server:`t`t" + $dhcpserver + "`nDefault Gateway:`t" + $defaultGateway + "`nPublic IP:`t`t" + $publicIpAddress + "`n`nDomain:`t`t`t" + $domain + "`n`nComputer Manufacturer:"+ $compManufacturer + "`nComputer Model:`t" + $compmodel + "`nSerial Number:`t`t" + $compSerial + "`nProcessor:`t`t" + $processorName + "`nMemory Amount:`t`t" + $memamount + "GB" + "`nSystem Uptime:`t`t" + $uptime + "`nWindows Version:`t" + $winversion
         
     }
     else {
-        $State.advancedInfoTextBox = "Computer Name:`t`t" + $State.computerName + "`nUser Name:`t`t" + $State.username + "`n`nNetwork Adapter:`t" + $nicname0 + "`nIP Address:`t`t" + $ip0 + "`nMAC Address:`t`t" + $mac0 + "`nDNS Servers:`t`t" + $dnsservers + "`nDHCP Server:`t`t" + $dhcpserver + "`n`nNetwork Adapter 2:`t" + $nicname1 + "`nIP Address:`t`t" + $ip1 + "`nMAC Address:`t`t" + $mac1 + "`nDefault Gateway:`t" + $defaultGateway + "`nPublic IP:`t`t" + $publicIpAddress + "`n`nDomain:`t`t`t" + $domain + "`n`nComputer Manufacturer:"+ $compManufacturer + "`nComputer Model:`t" + $compmodel + "`nProcessor:`t`t" + $processorName + "`nMemory Amount:`t`t" + $memamount + "GB" + "`nSystem Uptime:`t`t" + $uptime + "`nWindows Version:`t" + $winversion
+        $State.advancedInfoTextBox = "Computer Name:`t`t" + $State.computerName + "`nUser Name:`t`t" + $State.username + "`n`nNetwork Adapter:`t" + $nicname0 + "`nIP Address:`t`t" + $ip0 + "`nMAC Address:`t`t" + $mac0 + "`nDNS Servers:`t`t" + $dnsservers + "`nDHCP Server:`t`t" + $dhcpserver + "`n`nNetwork Adapter 2:`t" + $nicname1 + "`nIP Address:`t`t" + $ip1 + "`nMAC Address:`t`t" + $mac1 + "`nDefault Gateway:`t" + $defaultGateway + "`nPublic IP:`t`t" + $publicIpAddress + "`n`nDomain:`t`t`t" + $domain + "`n`nComputer Manufacturer:"+ $compManufacturer + "`nComputer Model:`t" + $compmodel + "`nSerial Number:`t`t" + $compSerial + "`nProcessor:`t`t" + $processorName + "`nMemory Amount:`t`t" + $memamount + "GB" + "`nSystem Uptime:`t`t" + $uptime + "`nWindows Version:`t" + $winversion
     }
 }
 #endregion
 
 #region +++++++++++++++++++++ Reset Addins +++++++++++++++++++++ 
-function Reset-Addins {
+function Initialize-OfficeAddins {
     param ([string]$application)
     
-    Try {
-        # Remove DisabledItems key
-        $registry = Get-ChildItem -Path "HKCU:\SOFTWARE\Microsoft\Office" -Recurse | Where {$_.Name -like "*.0\$application\Resiliency\DisabledItems" }
+    $result = [Windows.Forms.MessageBox]::Show("This will reload all disabled $application add-ins. Would you like to continue?","Reset $application Add-ins","OKCancel","Warning")
 
-        if (!$registry) {
-            [Windows.Forms.MessageBox]::Show("Could not find an Office installation.")
-        }
-   
-        foreach ($reg in $registry) {
-            Remove-Item -Path "Registry::$reg"
-        }
-    }
-    Catch {
-        [Windows.Forms.MessageBox]::Show("Failed to remove any Disabled Items for $application")
-    }
-
-    Try {
-        $registry = Get-ChildItem -Path "HKCU:\SOFTWARE\Microsoft\Office\$application\Addins" -ErrorAction Stop
-        foreach ($reg in $registry) {
-            if ((Get-ItemPropertyValue -Path $reg -Name LoadBehavior) -lt 3) {
-                Set-ItemProperty -Path $reg -Name LoadBehavior -Value 3
+    if ($result -eq "OK") {
+        Try {
+            $registry = Get-ChildItem -Path "HKCU:\SOFTWARE\Microsoft\Office" -Recurse | Where-Object {$_.Name -like "*.0\$application\Resiliency\DisabledItems" }
+    
+            if (!$registry) {
+                [Windows.Forms.MessageBox]::Show("Could not find an Office installation.","Reset Office Add-ins","OK","Warning")
+            }
+       
+            foreach ($reg in $registry) {
+                Remove-Item -Path "Registry::$reg"
             }
         }
-    }
+        Catch {
+            [Windows.Forms.MessageBox]::Show("Failed to remove any Disabled Items for $application")
+        }
+    
+        Try {
+            $registry = Get-ChildItem -Path "HKCU:\SOFTWARE\Microsoft\Office\$application\Addins" -ErrorAction Stop
+            foreach ($reg in $registry) {
+                if ((Get-ItemPropertyValue -Path Registry::$reg -Name LoadBehavior) -lt 3) {
+                    Set-ItemProperty -Path Registry::$reg -Name LoadBehavior -Value 3
+                }
+            }
+        }
+        Catch [System.Management.Automation.ItemNotFoundException] {
+            [Windows.Forms.MessageBox]::Show("Could not find any $application Office installation.","Reset Office Add-ins","OK","Information")
+        }
+        Catch {
+            [Windows.Forms.MessageBox]::Show("Failed to change enable add-ins for $application.","Reset Office Add-ins","OK","Warning")
+        }
+        
+        [Windows.Forms.MessageBox]::Show("Reset $application complete.")
 
-    Catch [System.Management.Automation.ItemNotFoundException] {
-        [Windows.Forms.MessageBox]::Show("Could not find any $application add-ins to enable.")
-    }
-    Catch  {
-        [Windows.Forms.MessageBox]::Show("Failed to change enable add-ins for $application")
     }
     
-
-    
-    [Windows.Forms.MessageBox]::Show("Reset $application complete")
 }
 
 #endregion
 
 #region +++++++++++++++++++++ Buttons +++++++++++++++++++++ 
-function Reset-Word {
-    Reset-Addins("Word")
+function Invoke-ResetWord {
+    Initialize-OfficeAddins("Word")
 }
 
-function Reset-Outlook {
-    Reset-Addins("Outlook")
+function Invoke-ResetOutlook {
+    Initialize-OfficeAddins("Outlook")
 }
 
-function Reset-Powerpoint {
-    Reset-Addins("Powerpoint")
+function Invoke-ResetPowerpoint {
+    Initialize-OfficeAddins("Powerpoint")
 }
 
-function Reset-Excel {
-    Reset-Addins("Excel")
+function Invoke-ResetExcel {
+    Initialize-OfficeAddins("Excel")
 }
 
-function Copy-Clipboard {
+function Invoke-CopyClipboard {
     Write-Output $State.advancedInfoTextBox | & "$env:windir\system32\clip.exe"
 }
 
-function Go-Back {
+function Invoke-GoBack {
     $State.tabControlIndex = "0"   
 }
 
-function Show-Advanced {
+function Invoke-GoAdvanced {
     $State.tabControlIndex = "1"
     
     Async {
-        Gather-AdvancedData   
+        Initialize-AdvancedDataPage
     }
     
 }
+#endregion
 #endregion
 
 #-------------------------------------------------------------#
@@ -309,14 +311,14 @@ $Window = [Windows.Markup.XamlReader]::Parse($Xaml)
 $xml.SelectNodes("//*[@Name]") | ForEach-Object { Set-Variable -Name $_.Name -Value $Window.FindName($_.Name) }
 
 
-$kddhyif3834rg.Add_Loaded({Gather-BasicData $this $_})
-$kddhyif5tgqal.Add_Click({Show-Advanced $this $_})
-$resetWordButton.Add_Click({Reset-Word $this $_})
-$resetOutlookButton.Add_Click({Reset-Outlook $this $_})
-$resetPowerpointButton.Add_Click({Reset-Powerpoint $this $_})
-$resetExcelButton.Add_Click({Reset-Excel $this $_})
-$kddhyif6nvlgk.Add_Click({Copy-Clipboard $this $_})
-$kddhyif6wutf1.Add_Click({Go-Back $this $_})
+$kdek7manke31y.Add_Loaded({Initialize-BasicDataPage $this $_})
+$advancedInfoButton.Add_Click({Invoke-GoAdvanced $this $_})
+$resetWordButton.Add_Click({Invoke-ResetWord $this $_})
+$resetOutlookButton.Add_Click({Invoke-ResetOutlook $this $_})
+$resetPowerpointButton.Add_Click({Invoke-ResetPowerpoint $this $_})
+$resetExcelButton.Add_Click({Invoke-ResetExcel $this $_})
+$copyToClipboardButton.Add_Click({Invoke-CopyClipboard $this $_})
+$backButton.Add_Click({Invoke-GoBack $this $_})
 
 $State = [PSCustomObject]@{}
 
@@ -441,5 +443,4 @@ Start-RunspaceTask $JobCleanupScript @([PSObject]@{ Name='Jobs' ; Variable=$Jobs
 
 
 $Window.ShowDialog()
-
 
